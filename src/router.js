@@ -1,26 +1,41 @@
 import Vue from "vue";
 import Router from "vue-router";
-import Home from "./views/Home.vue";
+import Root from "./components/Root.vue";
+import Login from "./components/Login.vue";
+import { IonicVueRouter } from "@ionic/vue";
 
-Vue.use(Router);
+Vue.use(IonicVueRouter);
+// Vue.use(Router)
 
-export default new Router({
+const router = new IonicVueRouter({
   mode: "history",
   base: process.env.BASE_URL,
   routes: [
     {
       path: "/",
-      name: "home",
-      component: Home
+      name: "Root",
+      component: Root
+      // beforeEnter: (to, from, next) => {
+      //   console.log(localStorage.getItem('username'))
+      //   if (localStorage.getItem('username'))
+      //     next()
+      //   next('Login')
+      // }
     },
     {
-      path: "/about",
-      name: "about",
-      // route level code-splitting
-      // this generates a separate chunk (about.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () =>
-        import(/* webpackChunkName: "about" */ "./views/About.vue")
+      path: "/login",
+      name: "Login",
+      component: Login
     }
   ]
 });
+router.beforeEach((to, from, next) => {
+  console.table({ to, from, next });
+  console.log(localStorage.getItem("username"));
+  if (!localStorage.getItem("username") && to.name != "Login") {
+    next("login");
+  }
+  next();
+});
+
+export default router;
